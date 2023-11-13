@@ -1,5 +1,5 @@
 const express = require('express');
-const { sequelize, User } = require('./db');
+const { sequelize, User } = require('../database/db');
 const { updateBalance } = require('./user.service')
 
 const router = express.Router();

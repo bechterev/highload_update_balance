@@ -1,6 +1,6 @@
 const express = require('express');
-const { sequelize, User, initializeDatabase } = require('./db');
-const routes = require('./user.route');
+const { sequelize, User, initializeDatabase } = require('./database/db');
+const userRoutes = require('./user/user.route');
 require('dotenv').config();
 
 const app = express();
@@ -8,8 +8,10 @@ const port = process.env.APP_PORT || 3000;
 
 initializeDatabase();
 
-app.use('/', routes);
+app.use('/', userRoutes);
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running at http://localhost:${port}`);
+// });
+
+module.exports = app

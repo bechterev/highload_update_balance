@@ -1,4 +1,4 @@
-const { sequelize, User } = require('./db');
+const { sequelize, User } = require('../database/db');
 const { Transaction } = require('sequelize');
 
 const RETRY_DELAY_MS = 50;

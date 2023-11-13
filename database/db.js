@@ -19,10 +19,29 @@ const User = sequelize.define('User', {
   timestamps: false,
 })
 
+const Task = sequelize.define('Task', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  worker: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 0,
+    },
+  },
+})
+
 const initializeDatabase = async () => {
   try {
     await sequelize.sync({ force: true });
     await User.create({ balance: BALANCE_INIT });
+    await Task.create();
   } catch (error) {
     console.log('Error initializing database:', error);
   }
@@ -31,5 +50,6 @@ const initializeDatabase = async () => {
 module.exports = {
   sequelize,
   User,
+  Task,
   initializeDatabase,
 };
