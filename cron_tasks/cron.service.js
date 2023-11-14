@@ -14,7 +14,6 @@ const workers = [];
 let workersTasks = new Map();
 
 async function processTask(taskName, func, paramFunc) {
-  // Проверяем, есть ли свободные дочерние процессы
   let match = false;
   let sizes = [];
   for(const workerId of workersTasks.keys()) {
@@ -47,10 +46,7 @@ async function processTask(taskName, func, paramFunc) {
 
 }
 
-
-// Проверяем, является ли текущий процесс главным
 if (cluster.isPrimary) {
-  // Создаем дочерние процессы
   for (let i = 0; i < numCPUs; i++) {
     const worker = cluster.fork();
     workers.push(worker);
@@ -58,9 +54,7 @@ if (cluster.isPrimary) {
     workersTasks.set(worker.id, new Map());
   }
 
-  // Отслеживаем сообщения от дочерних процессов
   cluster.on('message', (worker, message) => {
-    // Ваша логика обработки сообщения
     console.log(`Message from worker ${worker.process.pid}: woker_id: ${worker.id} - complete ${message}`);
 
     const tasks = workersTasks.get(worker.id);
@@ -95,81 +89,63 @@ if (cluster.isPrimary) {
     console.log(`Server is running at http://localhost:${port}`);
   });
 
-  // Обработка задач из cron в главном процессе
   cron.schedule('*/30 * * * * *',  () => {
-    // Your task logic goes here
     const taskName = 'TaskName 1';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/30 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 2';
     processTask(taskName,  delay, 120000);
 
   });
 
   cron.schedule('*/15 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 3';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/21 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 4';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/18 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 5';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/44 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 6';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/39 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 7';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/51 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 8';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/28 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 9';
     processTask(taskName, delay, 120000);
   });
 
   cron.schedule('*/54 * * * * *', () => {
-    // Your task logic goes here
     const taskName = 'TaskName 10';
     processTask(taskName, delay, 120000);
   });
 
 } else {
-  // В дочерних процессах выполняем код задачи
   process.on('message', async (message) => {
-
     const { taskName, task, param } = message;
     var asyncFn = new Function('return ' + task)();
-    console.log(`child process ${taskName} started, task ${process.pid}`)
-    // Ваша логика выполнения задачи
     await asyncFn(param);
-
-    // Сообщаем главному процессу, что задача выполнена
     process.send(taskName);
-
   });
 }
 
